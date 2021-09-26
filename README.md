@@ -30,6 +30,20 @@ The following line set a 'select' search input : instead of the standard input t
 
 `"columnDefs" : [{"targets": [2], "searchtype": "select"}]`
 
+## Localization example
+
+``` javascript
+$('#example').DataTable()
+	.filtersLocalization({
+		deselectAllText: "Отчистить все",
+		selectAllText: "Выбрать все",
+		doneButtonText: "Ок",
+		noneResultsText: "Совпадений не найдено {0}",
+		noneSelectedText: "Ничего не выбрано"
+	})
+	.filtersOn();
+```
+
 ## Evolutions
 
 - Add the following type of input : [gt, gte, eq, lte, lt][value]

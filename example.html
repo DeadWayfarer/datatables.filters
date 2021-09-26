@@ -24,7 +24,14 @@
 			    		"dom": "tp",
 			    		"pageLength": 15,
 						"columnDefs" : [{"targets": [2], "searchtype": "select"}, {"targets": [3], "searchtype": "multiselect"}, {"targets": [4, 5], "searchable": false}]
-			    }).filtersOn();
+			    }).filtersLocalization({
+					deselectAllText: "Отчистить все",
+					selectAllText: "Выбрать все",
+					doneButtonText: "Ок",
+					noneResultsText: "Совпадений не найдено {0}",
+					noneSelectedText: "Ничего не выбрано"
+				})
+				.filtersOn();
 			});
 		</script> 
 	</head>

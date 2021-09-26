@@ -31,8 +31,9 @@ $.fn.dataTable.Api.register( 'filtersOn()', function () {
 	
 	// Populate the filter header
 	$('#' + id + ' thead th').each( function (index) {
-		var searchable = dataTable.context[0].aoColumns[index].bSearchable;
-		var searchtype = dataTable.context[0].aoColumns[index].searchtype;
+		var context = dataTable.context[0];
+		var searchable = context.aoColumns[index].bSearchable;
+		var searchtype = context.aoColumns[index].searchtype;
 		
 		// Add input only if current column is searchable
 		if(searchable)
@@ -169,6 +170,20 @@ $.fn.dataTable.Api.register( 'inputData()', function () {
 	else
 		colData = cellNode.innerHTML;
 	return colData;
+});
+
+//Set filters localization
+$.fn.dataTable.Api.register( 'filtersLocalization()', function () {
+	data = arguments[0];
+	defaluts = $.fn.selectpicker.Constructor.DEFAULTS;
+
+	defaluts.deselectAllText	= data.deselectAllText	
+	defaluts.doneButtonText		= data.doneButtonText		
+	defaluts.noneResultsText	= data.noneResultsText	
+	defaluts.noneSelectedText	= data.noneSelectedText	
+	defaluts.selectAllText		= data.selectAllText		
+
+	return this;
 });
 
 // Add custom search for filters
