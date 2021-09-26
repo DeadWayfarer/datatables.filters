@@ -43,9 +43,12 @@ $.fn.dataTable.Api.register( 'filtersOn()', function () {
 					if (select.selectpicker)
 						select.addClass("selectpicker");
 					select.append('<option value=""></option>');
-					dataTable.column(index).data().unique().sort().each( function ( d, j ) {
-						select.append( '<option value="' + d + '">' + d + '</option>' )
-					});
+					dataTable.inputData(null, index)[0]
+						.filter((value, index, self) => self.indexOf(value) === index) //unique values
+						.sort()
+						.forEach( function ( d, j ) {
+							select.append( '<option value="' + d + '">' + d + '</option>' )
+						});
 					
 					$('#' + id + ' .filter tr').append($('<th>').append(select));
 					break;
@@ -114,14 +117,72 @@ $.fn.dataTable.Api.register( 'filtersClear()', function () {
 	
 });
 
+//Extract value from input, select or any other HTML element
+$.fn.dataTable.Api.register( 'inputData()', function () {
+	let table = this;
+	let rowIndex = arguments[0];
+	let colIndex = arguments[1];
+
+	if (rowIndex == null)
+		rowIndex = -1;
+	if (colIndex == null)
+		colIndex = -1;
+
+	if (rowIndex == -1 && colIndex == -1) {
+		return
+	}
+
+	if (rowIndex == -1) {
+		let rowData = [];
+		
+		for (rowIndex in table.rows()[0]) {
+			let cellData = table.inputData(rowIndex, colIndex)
+			rowData.push(cellData);
+		}
+
+		return [rowData];
+	}
+
+	if (colIndex == -1) {
+		let rowData = [];
+		
+		for (colIndex in table.columns()[0]) {
+			let cellData = table.inputData(rowIndex, colIndex)
+			rowData.push(cellData);
+		}
+
+		return [rowData];
+	}
+
+	
+	let cellNode = table.cell(rowIndex,colIndex).node();
+	let colData;
+	if (cellNode.innerHTML.match(/<.+>/)) {
+		let child = $(cellNode.children[0]);
+		let tagName = child[0].tagName.toLowerCase();
+		let isInput = tagName == "select" || tagName == "input"
+		if (isInput)
+			colData = child.val();
+		else
+			colData = child.html();
+	}
+	else
+		colData = cellNode.innerHTML;
+	return colData;
+});
+
 // Add custom search for filters
 $.fn.dataTable.ext.search.push(
 	function ( settings, data, dataIndex ) {
+		let table = $(settings.nTable).DataTable();
+
 		for (let colIndex in settings.aoColumns) {
 			let col = settings.aoColumns[colIndex];
 			let colFilter = col.filterValue;
-			let colData = data[colIndex];
-			
+
+			//Extract value from input, select or any other HTML element
+			let colData = table.inputData(dataIndex,colIndex);
+
 			if (!colFilter)
 				continue;
 			
